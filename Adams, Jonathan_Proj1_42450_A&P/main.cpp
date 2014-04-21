@@ -17,6 +17,11 @@ int main(int argc, char** argv) {
     //Declare Variables
     unsigned short choose;
     char exit;
+    //Round decimals -- 1 Decimal point is sufficient for all calculations
+    //in this program
+    cout.setf(ios::fixed);
+    cout.setf(ios::showpoint);
+    cout.precision(1);
     //Welcome statement to not be looped
     cout<<"Welcome to the Aerospace and Powerplant Maintenance Helper."<<endl;
     //Prompt user for number of problem to execute
@@ -93,30 +98,51 @@ int main(int argc, char** argv) {
                         cout<<"Current CG is "<<acftCG<<"."<<endl;
                         cout<<"Are you adding, removing or replacing an item?\n";
                         cout<<"Type in option above in lowercase letters"<<endl;
+                        cout<<"Type exit to leave or reset CG calculator.";
                         string opt1;
                         cin>>opt1;
+                        do {
                         //Error catching loop opt1
-                        while (opt1!="removing"&&opt1!="adding"&&opt1!="replacing"){
+                        while (opt1!="removing"&&opt1!="adding"&&opt1!=
+                               "replacing"&&opt1!="exit"){
                             cin.clear();
                             cin.ignore();
                             cout<<"Invalid input, re-enter:"<<endl<<endl;
                             cout<<"Please type one of the following options: \n";
                             cout<<"removing \nadding \nreplacing\n";
                             cout<<"Type in option above in lowercase letters"<<endl;
+                            cout<<"Or type exit to leave or reset CG calculator"<<endl;
                             cin>>opt1;
                             cout<<endl<<endl;
                         }
                         //End error catching loop opt1
                         if (opt1=="removing") {
-                            cout<<"You're removing"<<endl;break;
+                            cout<<"Enter weight, in lbs to 1/10 lb accuracy\n";
+                            cout<<"of item being removed"<<endl;
+                            cin>>itemOld;
+                            cout<<"Enter ARM (distance from Datum in inches)\n";
+                            cout<<"of item being removed, to 1/10th of an inch"<<endl;
+                            cin>>oldArm;
+                            acftW=acftW-itemOld;
+                            acftMom=acftMom-(itemOld*oldArm);
+                            acftCG=(acftMom/acftW);
+                            cout<<"New CG is: "<<acftCG<<"."<<endl;
                         }
                         if (opt1=="adding") {
-                            cout<<"You're adding an item"<<endl;break;
+                            cout<<"You're adding an item"<<endl;
                         }
                         if (opt1=="replacing") {
-                            cout<<"You're replacing an item"<<endl;break;
+                            cout<<"You're replacing an item"<<endl;
                         }
+                        cout<<"Current CG is "<<acftCG<<"."<<endl;
+                        cout<<"Are you adding, removing or replacing another item?"<<endl;
+                        cout<<"Type in option above in lowercase letters"<<endl;
+                        cout<<"Type exit to leave or reset CG calculator.";
+                        cin>>opt1;       
+                    } while (opt1!="exit");
+                    
                     }
+                    
                     case 2:{
                         
                     }
