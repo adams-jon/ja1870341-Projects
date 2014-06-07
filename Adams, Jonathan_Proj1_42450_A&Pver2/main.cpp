@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         
         case 1:{ 
 ///////////////////////////////Component Calculator/////////////////////////////
-            cout<<"Program 1:New Component Longitudinal CG Calculator";
+            cout<<"Program 1: New Component Longitudinal CG Calculator";
             cout<<endl;
             do {
             //START CODE//////////////////////////////
@@ -148,14 +148,14 @@ int main(int argc, char** argv) {
                             //Error catch statement for FWD & AWF
                             //Important that the user has to input this
                             //because it sets the ARM to positive or negative
-                                do {
+                                while (armChoi!='f'&&armChoi!='F'
+                                        &&armChoi!='a'&&armChoi!='A') {
                                 cout<<"Error! Invalid Input!"<<endl<<endl;
                                 cout<<"Determining ARM: Is the item located\n";
                                 cout<<"FWD or AFT of Acft Datum?"<<endl;
                                 cout<<"F for FWD, A for AFT: ";  
                                 cin>>armChoi;
-                                   } while (armChoi!='f'&&armChoi!='F'
-                                        &&armChoi!='a'&&armChoi!='A');
+                                } 
                             //end error statement
                             cout<<"Enter ARM (distance from Datum in inches)\n";
                             cout<<"of item being removed, to 1/10th of an inch"<<endl;
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
                                 cout<<"FWD or AFT of Acft Datum?"<<endl;
                                 cout<<"F for FWD, A for AFT: ";  
                                 cin>>armChoi;
-                                   } 
+                                } 
                             //End error catch statement
                             cout<<"Enter ARM (distance from Datum in inches)\n";
                             cout<<"of item being removed, to 1/10th of an inch"<<endl;
@@ -217,14 +217,14 @@ int main(int argc, char** argv) {
                             cout<<"F for FWD, A for AFT: ";
                             cin>>armChoi;
                             //Error catching statement
-                                do {
+                                while (armChoi!='f'&&armChoi!='F'
+                                        &&armChoi!='a'&&armChoi!='A') {
                                 cout<<"Error! Invalid Input!"<<endl<<endl;
                                 cout<<"Determining ARM: Is the item located\n";
                                 cout<<"FWD or AFT of Acft Datum?"<<endl;
                                 cout<<"F for FWD, A for AFT: ";  
                                 cin>>armChoi;
-                                   } while (armChoi!='f'&&armChoi!='F'
-                                        &&armChoi!='a'&&armChoi!='A');
+                                   } 
                             //End error catching statement
                             cout<<"Enter ARM (distance from Datum in inches)\n";
                             cout<<"of item being removed, to 1/10th of an inch"<<endl;
@@ -275,6 +275,7 @@ int main(int argc, char** argv) {
                             cout<<setw(20)<<left<<"New Acft CG is: ";
                             cout<<setw(20)<<right<<acftCG<<endl<<endl;              
                         }
+                        if (opt1!="exit") {
                         cout<<"Are you adding, removing or replacing another item?"<<endl;
                         cout<<"Type in option above in lowercase letters"<<endl;
                         cout<<"Type exit to leave or reset CG calculator."<<endl;
@@ -290,9 +291,10 @@ int main(int argc, char** argv) {
                             cout<<"Or type exit to leave or reset CG calculator"<<endl;
                             cin>>opt1;
                             cout<<endl<<endl; }
+                        }
                     } while (opt1!="exit");
-                    
-                    }
+                    break;
+                    } // end case 1
                     
                     case 2:{
                         
@@ -317,18 +319,18 @@ int main(int argc, char** argv) {
                         cin>>opt1;
                         do {
                         //Error catching loop opt1
-                        while (opt1!="removing"&&opt1!="adding"&&opt1!=
+                                while (opt1!="removing"&&opt1!="adding"&&opt1!=
                                "replacing"&&opt1!="exit"){
-                            cin.clear();
-                            cin.ignore();
-                            cout<<"Invalid input, re-enter:"<<endl<<endl;
-                            cout<<"Please type one of the following options: \n";
-                            cout<<"removing \nadding \nreplacing\n";
-                            cout<<"Type in option above in lowercase letters"<<endl;
-                            cout<<"Or type exit to leave or reset CG calculator"<<endl;
-                            cin>>opt1;
-                            cout<<endl<<endl;
-                        }
+                                cin.clear();
+                                cin.ignore();
+                                cout<<"Invalid input, re-enter:"<<endl<<endl;
+                                cout<<"Please type one of the following options: \n";
+                                cout<<"removing \nadding \nreplacing\n";
+                                cout<<"Type in option above in lowercase letters"<<endl;
+                                cout<<"Or type exit to leave or reset CG calculator"<<endl;
+                                cin>>opt1;
+                                cout<<endl<<endl;
+                                }
                         //End error catching loop opt1
                         if (opt1=="removing") {
                             cout<<"You're removing an item"<<endl;
@@ -339,14 +341,14 @@ int main(int argc, char** argv) {
                             cout<<"FWD or AFT of Acft Datum?"<<endl;
                             cout<<"F for FWD, A for AFT: ";
                             cin>>armChoi;
-                                do {
+                                while (armChoi!='f'&&armChoi!='F'
+                                        &&armChoi!='a'&&armChoi!='A') {
                                 cout<<"Error! Invalid Input!"<<endl<<endl;
                                 cout<<"Determining ARM: Is the item located\n";
                                 cout<<"FWD or AFT of Acft Datum?"<<endl;
                                 cout<<"F for FWD, A for AFT: ";  
                                 cin>>armChoi;
-                                   } while (armChoi!='f'&&armChoi!='F'
-                                        &&armChoi!='a'&&armChoi!='A');
+                                }
                             cout<<"Enter ARM (distance from Datum in inches)\n";
                             cout<<"of item being removed, to 1/10th of an inch"<<endl;
                             cin>>armOld;
@@ -398,14 +400,14 @@ int main(int argc, char** argv) {
                             cout<<"FWD or AFT of Acft Datum?"<<endl;
                             cout<<"F for FWD, A for AFT: ";
                             cin>>armChoi;
-                                do {
+                                while (armChoi!='f'&&armChoi!='F'
+                                        &&armChoi!='a'&&armChoi!='A') {
                                 cout<<"Error! Invalid Input!"<<endl<<endl;
                                 cout<<"Determining ARM: Is the item located\n";
                                 cout<<"FWD or AFT of Acft Datum?"<<endl;
                                 cout<<"F for FWD, A for AFT: ";  
                                 cin>>armChoi;
-                                   } while (armChoi!='f'&&armChoi!='F'
-                                        &&armChoi!='a'&&armChoi!='A');
+                                } 
                             cout<<"Enter ARM (distance from Datum in inches)\n";
                             cout<<"of item being removed, to 1/10th of an inch"<<endl;
                             cin>>armOld;
@@ -454,6 +456,7 @@ int main(int argc, char** argv) {
                             cout<<setw(20)<<left<<"New Acft CG is: ";
                             cout<<setw(20)<<right<<acftCG<<endl<<endl;              
                         }
+                        if (opt1!="exit") {
                         cout<<"Are you adding, removing or replacing another item?"<<endl;
                         cout<<"Type in option above in lowercase letters"<<endl;
                         cout<<"Type exit to leave or reset CG calculator."<<endl;
@@ -469,6 +472,7 @@ int main(int argc, char** argv) {
                             cout<<"Or type exit to leave or reset CG calculator"<<endl;
                             cin>>opt1;
                             cout<<endl<<endl; }
+                        }
                     } while (opt1!="exit");
                         
                     }
