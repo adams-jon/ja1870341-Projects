@@ -508,14 +508,14 @@ int main(int argc, char** argv) {
                 unsigned short itemArm=0; //location of new item
                 srand(static_cast<unsigned int>(time(0))); // time seed for rand
                 cout<<"Aircraft Weight: "<<endl; //display weight of 1000 to 1049
-                acftW=rand()%500+1000; 
+                acftW=rand()%500+3000; 
                 cout<<acftW<<" lbs"<<endl;
                 cout<<"Aircraft Moment: "<<endl; //display mom of 30000 to 30999
-                acftMom=rand()%1000+30000;
+                acftMom=rand()%1000+35000;
                 cout<<acftMom<<endl;
                 cout<<"Starting CG is: "<<endl;
                 cout<<acftMom/acftW<<endl<<endl;
-                itemW=rand()%9+20; //display starting CG and create itemW 20-29
+                itemW=rand()%9+50; //display starting CG and create itemW 20-29
                 cout<<"Item added weighs:"<<endl;
                 cout<<itemW<<" lbs"<<endl;
                 itemArm=rand()%9+1; //display item location 2-11
