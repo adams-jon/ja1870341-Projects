@@ -9,9 +9,16 @@
 #include <iomanip>
 #include <ctime>
 #include <cstdlib>
+#include <fstream>
 using namespace std;
 //Global Constants
 //Function Prototypes
+void fillary (int[], int, int, int);
+float convert (int, float);
+void startNE (int, float &, float &);
+void startIN (int, float &, float &);
+void startFO (int, float &, float &);
+void prinTbl (int[], int &, unsigned short &);
 //Execution
 int main(int argc, char** argv) {
     //Declare Variables
@@ -29,10 +36,12 @@ int main(int argc, char** argv) {
     cout<<"Choose from the following list"<<endl;
     cout<<"1. Re-Calculate Longitudinal CG for new component"<<endl;
     cout<<"2. Longitudinal CG Practice"<<endl;
-    cout<<"3. Exit Program - All"<<endl;
+    cout<<"3. Load Cargo"<<endl;
+    cout<<"4. Print Torque Table"<<endl;
+    cout<<"5. Exit Program - All"<<endl;
     cin>>choose;
     //Catch invalid input choose
-    while (!(choose>=1 && choose<=3)) {
+    while (!(choose>=1 && choose<=5)) {
         cin.clear();
     	cin.ignore();
         cout<<"Not an option! Please re-enter: "<<endl;
@@ -548,11 +557,176 @@ int main(int argc, char** argv) {
             cout<<"Happy Landings!"<<endl;break;
         }
 ////////////////////////////////////////////////////////////////////////////////  
+        //This is primarily just to practice with arrays
+        case 4: {
+            //Declare an array that can accommodate up to 1000 units of int
+            //I know a vector would be better here, but I am more comfortable
+            //with arrays for now. 
+            int tableS[1000], increm=1, size=1000, startV;
+            unsigned short dataC;
+            cout<<"Print A Custom Shop Use Torque Value Conversion Table"<<endl<<endl;
+            cout<<"User can print a table up to 1000 values"<<endl;
+            cout<<"User chooses Troque Data needed (column 1)"<<endl;
+            cout<<"---Either, Newton Meters, Foot Pounds, or Inch Pounds"<<endl<<endl;
+            cout<<"Table will print out with corresponding values of the"<<endl;
+            cout<<"other two data types, so the user can use any kind of"<<endl;
+            cout<<"torque wrench!"<<endl<<endl;
+            cout<<"User can choose how many values to print, and how to "<<endl;
+            cout<<"increment those values!"<<endl<<endl;
+            cout<<"What data type would you like column 1 to be?"<<endl;
+            cout<<"(this should be the type you're commonly asked"<<endl;
+            cout<<" for in tech data)"<<endl;
+            cout<<"Press 1 for Newton Meters"<<endl;
+            cout<<"Press 2 for Inch Pounds"<<endl;
+            cout<<"Press 3 for Foot Pounds"<<endl;
+            cin>>dataC;
+            //Error catch
+                while (dataC!=1&&dataC!=2&&dataC!=3) {
+                        cout<<"Error! Not an option!"<<endl;
+                        cout<<"Press 1 for Newton Meters"<<endl;
+                        cout<<"Press 2 for Inch Pounds"<<endl;
+                        cout<<"Press 3 for Foot Pounds"<<endl;
+                        cin>>dataC;
+                }
+            cout<<"Enter how many values you would like the table to go up to: "<<endl;
+            cout<<"Max is 1000; if printing it is suggested to keep under 75"<<endl;
+            cin>>size;
+                while (size>1000) {
+                        cout<<"Too large, re-enter under 1000"<<endl;
+                        cin>>size;
+                }
+                while (size<1) {
+                        cout<<"Too small, value must be a whole #"<<endl;
+                        cout<<"above zero and below 1000"<<endl;
+                        cin>>size;
+                }
+            cout<<"Enter first value you want the table to start at: "<<endl;
+            cin>>startV;
+            cout<<"Enter how you would like the table to be incremented: "<<endl;
+            cout<<"(Every 1, 2, 5, 10, etc)"<<endl;
+            cin>>increm;
+            fillary(tableS, size, increm, startV);
+            prinTbl(tableS, size, dataC);
+            
+        }
+////////////////////////////////////////////////////////////////////////////////  
+        case 5: {
+            cout<<"Happy Landings!"<<endl;break;
+        }
+
     } // switch statement end bracket
 ////////////////////////////////////////////////////////////////////////////////
-    } while (choose!=3);
+    } while (choose!=5);
 ////////////////////////////////////////////////////////////////////////////////        
 //Exit Stage Right
     return 0;
 }
 
+void fillary(int array[], int size, int increm, int first) {
+    int count=1;
+    for (int index=0; index<size; index++){
+        array[index]=first;
+        //cout<<"Array Index "<<count<<" equals "<<first<<endl;
+        first+=increm;
+        count++;
+    }
+}
+float convert (int origV, float conv1) {
+    float newVal;
+    newVal=(origV*conv1);
+    return newVal;
+}
+//Function for user choosing to start with newtons
+void startNE (int indexV, float &inchLb, float &footLb){
+    //Multiplication factors to convert newton meters, to foot lbs and inch lbs
+    float NEWTOIN=8.85074579, NEWTOLB=0.737562149;
+    inchLb=convert(indexV, NEWTOIN);
+    footLb=convert(indexV, NEWTOLB);    
+}
+//Function for user choosing inch pounds to start
+void startIN (int indexV, float &footLb, float &newtMe){
+    //Multiplication factors to convert inch lbs, to foot lbs and newton meters
+    float INTONEW=0.112984829, INTOLB=0.0833;
+    footLb=convert(indexV, INTOLB);
+    newtMe=convert(indexV, INTONEW);
+}
+//Function for user choosing foot pounds to start
+void startFO (int indexV, float &inchLb, float &newtMe){
+    //Multiplication factors to convert inch lbs, to foot lbs and newton meters
+    float LBTOIN=12, LBTONEW=1.35581795;
+    inchLb=convert(indexV, LBTOIN);
+    newtMe=convert(indexV, LBTONEW);
+}
+
+
+void prinTbl (int array[], int &size, unsigned short &choice){
+    float col1=0, col2=0;
+    int passVal=0;
+    ofstream fout;
+    fout.open("CurrentTable.dat");
+    fout<<fixed<<setprecision(1)<<showpoint;
+    //Begin printing table options
+    //If user selected newtons: 
+    if (choice==1) {
+    cout<<setw(15)<<left<<"NewtMeters:";
+    fout<<setw(15)<<left<<"NewtMeters:";
+    cout<<setw(15)<<left<<"InchPounds:";
+    fout<<setw(15)<<left<<"InchPounds:";
+    cout<<setw(15)<<left<<"FootPounds:"<<endl;
+    fout<<setw(15)<<left<<"FootPounds:"<<endl;
+            for (int index=0; index<size; index++){
+                passVal=array[index];
+                startNE(passVal, col1, col2);
+                cout<<setw(15)<<left<<array[index];
+                fout<<setw(15)<<left<<array[index];
+                cout<<setw(15)<<left<<col1;
+                fout<<setw(15)<<left<<col1;
+                cout<<setw(15)<<left<<col2;
+                fout<<setw(15)<<left<<col2;
+                cout<<endl;
+                fout<<endl;
+            }
+    }
+    if (choice==2) {
+    cout<<setw(15)<<left<<"InchPounds:";
+    fout<<setw(15)<<left<<"InchPounds:";
+    cout<<setw(15)<<left<<"FootPounds:";
+    fout<<setw(15)<<left<<"FootPounds:";
+    cout<<setw(15)<<left<<"NewtMeters:"<<endl;
+    fout<<setw(15)<<left<<"NewtMeters:"<<endl;
+            for (int index=0; index<size; index++){
+                passVal=array[index];
+                startIN(passVal, col1, col2);
+                cout<<setw(15)<<left<<array[index];
+                fout<<setw(15)<<left<<array[index];
+                cout<<setw(15)<<left<<col1;
+                fout<<setw(15)<<left<<col1;
+                cout<<setw(15)<<left<<col2;
+                fout<<setw(15)<<left<<col2;
+                cout<<endl;
+                fout<<endl;
+            }
+    }
+    if (choice==3) {
+    cout<<setw(15)<<left<<"FootPounds:";
+    fout<<setw(15)<<left<<"FootPounds:";
+    cout<<setw(15)<<left<<"InchPounds:";
+    fout<<setw(15)<<left<<"InchPounds:";
+    cout<<setw(15)<<left<<"NewtMeters:"<<endl;
+    fout<<setw(15)<<left<<"NewtMeters:"<<endl;
+            for (int index=0; index<size; index++){
+                passVal=array[index];
+                startFO(passVal, col1, col2);
+                cout<<setw(15)<<left<<array[index];
+                fout<<setw(15)<<left<<array[index];
+                cout<<setw(15)<<left<<col1;
+                fout<<setw(15)<<left<<col1;
+                cout<<setw(15)<<left<<col2;
+                fout<<setw(15)<<left<<col2;
+                cout<<endl;
+                fout<<endl;
+            }
+    }
+    else cout<<"Program screwed up if you get here!"<<endl;
+    fout.close();
+}
