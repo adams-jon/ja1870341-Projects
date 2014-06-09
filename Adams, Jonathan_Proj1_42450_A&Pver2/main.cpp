@@ -19,6 +19,7 @@ void startNE (int, float &, float &);
 void startIN (int, float &, float &);
 void startFO (int, float &, float &);
 void prinTbl (int[], int &, unsigned short &);
+void prinAc (float[][3], int, float &, float &, short, short, float);
 //Execution
 int main(int argc, char** argv) {
     //Declare Variables
@@ -36,7 +37,7 @@ int main(int argc, char** argv) {
     cout<<"Choose from the following list"<<endl;
     cout<<"1. Re-Calculate Longitudinal CG for new component"<<endl;
     cout<<"2. Longitudinal CG Practice"<<endl;
-    cout<<"3. Load Cargo"<<endl;
+    cout<<"3. Load Cargo Simulation Cessna 340A Acft"<<endl;
     cout<<"4. Print Torque Table"<<endl;
     cout<<"5. Exit Program - All"<<endl;
     cin>>choose;
@@ -517,17 +518,17 @@ int main(int argc, char** argv) {
                 unsigned short itemArm=0; //location of new item
                 srand(static_cast<unsigned int>(time(0))); // time seed for rand
                 cout<<"Aircraft Weight: "<<endl; //display weight of 1000 to 1049
-                acftW=rand()%500+3000; 
+                acftW=rand()%900+2000; 
                 cout<<acftW<<" lbs"<<endl;
                 cout<<"Aircraft Moment: "<<endl; //display mom of 30000 to 30999
-                acftMom=rand()%1000+35000;
+                acftMom=rand()%1000+60000;
                 cout<<acftMom<<endl;
                 cout<<"Starting CG is: "<<endl;
                 cout<<acftMom/acftW<<endl<<endl;
-                itemW=rand()%9+50; //display starting CG and create itemW 20-29
+                itemW=rand()%9+150; //display starting CG and create itemW 20-29
                 cout<<"Item added weighs:"<<endl;
                 cout<<itemW<<" lbs"<<endl;
-                itemArm=rand()%9+1; //display item location 2-11
+                itemArm=rand()%9+50; //display item location 2-11
                 cout<<"Located "<<itemArm<<" inches aft of Datum"<<endl;
                 cout<<"Enter new aircraft CG: (to 1 decimal point)"<<endl;
                 //User inputs their calculation
@@ -554,7 +555,58 @@ int main(int argc, char** argv) {
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////       
         case 3: {
-            cout<<"Happy Landings!"<<endl;break;
+            float acftMom=0, acftW=0, carW=0;
+            float acftCar[4][3]={{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
+            int size=4;
+            short row=-1, col=-1;
+            char choice, rowCho;
+            ifstream fin;
+            fin.open("C340.dat");
+            fin>>acftW>>acftMom;
+            cout<<"Cargo Loading Simulation"<<endl;
+            cout<<"A Cessna 340's Data has been loaded for "<<endl;
+            cout<<"the simulation."<<endl;
+            cout<<"In the future, you will be able to load your own"<<endl;
+            cout<<"aircraft profile from a file"<<endl<<endl;
+            cout<<"There are 12 Cargo Locations on the acft: "<<endl<<endl;
+            prinAc(acftCar, size, acftW, acftMom, row, col, carW);
+            do {
+              //Reset inputs
+              row=-1, col=-1, carW=0;
+              //Print out current state of the array
+              //Fetch row #
+              cout<<"What row would you like to load cargo onto?"<<endl;
+              do {
+              cout<<"A, B, C or D?"<<endl;
+              cin>>rowCho;
+                if (rowCho=='A'||rowCho=='a') row=0;
+                else if (rowCho=='B'||rowCho=='b') row=1;
+                else if (rowCho=='C'||rowCho=='c') row=2;
+                else if (rowCho=='D'||rowCho=='d') row=3;
+                else cout<<"Invalid Choice!"<<endl;
+              } while (rowCho!='A'&&rowCho!='a'&&rowCho!='B'&&rowCho!='b'&&
+                      rowCho!='C'&&rowCho!='c'&&rowCho!='D'&&rowCho!='d');
+              //Fetch column #
+              cout<<"Station 1, 2 or 3? Enter number for station (1-3)"<<endl;
+              cin>>col;
+              while (col>3||col<0) {
+                  cout<<"Invalid input. Input 1, 2 or 3!"<<endl;
+                  cin>>col;        
+              }
+              //Set column # to appropriate index for array
+              col=(col-1);
+              //Now ask for weight
+              cout<<"Enter weight of cargo: "<<endl;
+              cin>>carW;
+              prinAc(acftCar, size, acftW, acftMom, row, col, carW);
+              //Run again??
+              cout<<"Would you like to load more cargo?"<<endl;
+              cout<<"Y for Yes, N for No"<<endl;
+              cin>>choice;
+            } while ((choice!='n')&&(choice!='N'));
+            fin.close();
+            //Return to menu
+            break;
         }
 ////////////////////////////////////////////////////////////////////////////////  
         //This is primarily just to practice with arrays
@@ -607,7 +659,9 @@ int main(int argc, char** argv) {
             cin>>increm;
             fillary(tableS, size, increm, startV);
             prinTbl(tableS, size, dataC);
-            
+            cout<<"File: CurrentTable.dat is now available in this"<<endl;
+            cout<<"directory to print with an appropriate program."<<endl;
+            break;     
         }
 ////////////////////////////////////////////////////////////////////////////////  
         case 5: {
@@ -658,12 +712,18 @@ void startFO (int indexV, float &inchLb, float &newtMe){
     newtMe=convert(indexV, LBTONEW);
 }
 
-
+//Once completing this function, I realize that a future improvement could be
+//re-writing thus function to print just one option, with more input variables.
+//Then I can take the menu logic for the data type, and xfer it into main.
 void prinTbl (int array[], int &size, unsigned short &choice){
+    //Columns
     float col1=0, col2=0;
+    //Placeholder
     int passVal=0;
+    //Open out stream to create a text file.
     ofstream fout;
     fout.open("CurrentTable.dat");
+    //Set precision for new out stream
     fout<<fixed<<setprecision(1)<<showpoint;
     //Begin printing table options
     //If user selected newtons: 
@@ -727,6 +787,63 @@ void prinTbl (int array[], int &size, unsigned short &choice){
                 fout<<endl;
             }
     }
-    else cout<<"Program screwed up if you get here!"<<endl;
+    
     fout.close();
 }
+void prinAc(float cargo[][3], int size, float &weight, float &moment,
+        short row, short col, float cargoW){
+    //Initial declarations and calculations
+    float acftW=weight, acftCG=(moment/weight), arm=0;
+    //Tally on new weight
+    weight=acftW+cargoW;
+    //Send weight to appropriate location
+    cargo[row][col]=cargoW;
+    //Add ARM multiplyer depending on location
+    if (row==0) {
+        arm=cargoW*15;
+    }
+    else if (row==1) {
+        arm=cargoW*25;
+    }
+    else if (row==2) {
+        arm=cargoW*25;
+    }
+    else if (row==3) {
+        arm=cargoW*35;
+    }
+    //Final calculations
+    moment=moment+arm;
+    acftCG=(moment/weight);
+    //Display
+    cout<<setw(58)<<setfill('*')<<"*"<<endl;
+    cout<<"A"<<setfill(' ')<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"A"<<endl;
+    cout<<"1"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[0][0]<<right;
+    cout<<"2"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[0][1]<<right;
+    cout<<"3"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[0][2]<<right<<"*"<<endl;
+    cout<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<endl;
+    cout<<setfill('*')<<setw(58)<<"*"<<endl;
+    cout<<"B"<<setfill(' ')<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"B"<<endl;
+    cout<<"1"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[1][0]<<right;
+    cout<<"2"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[1][1]<<right;
+    cout<<"3"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[1][2]<<right<<"*"<<endl;
+    cout<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<endl;
+    cout<<setfill('*')<<setw(58)<<"*"<<endl;
+    cout<<"C"<<setfill(' ')<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"C"<<endl;
+    cout<<"1"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[2][0]<<right;
+    cout<<"2"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[2][1]<<right;
+    cout<<"3"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[2][2]<<right<<"*"<<endl;
+    cout<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<endl;
+    cout<<setfill('*')<<setw(58)<<"*"<<endl;
+    cout<<"D"<<setfill(' ')<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"D"<<endl;
+    cout<<"1"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[3][0]<<right;
+    cout<<"2"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[3][1]<<right;
+    cout<<"3"<<setw(8)<<left<<"   LB= "<<setw(10)<<left<<cargo[3][2]<<right<<"*"<<endl;
+    cout<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<setw(19)<<"*"<<endl;
+    cout<<setfill('*')<<setw(58)<<"*"<<endl;
+    cout<<setfill(' ');
+    cout<<"Current: "<<endl;
+    cout<<setw(29)<<left<<"Acft Gross Weight: "<<setw(29)<<left;
+    cout<<"CG: "<<endl<<endl;
+    cout<<setw(10)<<left<<weight<<setw(19)<<left<<" pounds";
+    cout<<setw(10)<<left<<acftCG<<setw(29)<<left<<" inches"<<endl<<endl;
+} 
