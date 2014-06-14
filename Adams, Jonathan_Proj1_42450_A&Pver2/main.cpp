@@ -12,6 +12,7 @@
 #include <fstream>
 using namespace std;
 //Global Constants
+const int asize=4;
 //Function Prototypes
 void fillary (int[], int, int, int);
 float convert (int, float);
@@ -19,7 +20,7 @@ void startNE (int, float &, float &);
 void startIN (int, float &, float &);
 void startFO (int, float &, float &);
 void prinTbl (int[], int &, unsigned short &);
-void prinAc (float[][3], int, float &, float &, short, short, float);
+void prinAc (float[asize][3], int, float &, float &, short, short, float);
 //Execution
 int main(int argc, char** argv) {
     //Declare Variables
@@ -614,11 +615,17 @@ int main(int argc, char** argv) {
             //Declare an array that can accommodate up to 1000 units of int
             //I know a vector would be better here, but I am more comfortable
             //with arrays for now. 
-            int tableS[1000], increm=1, size=1000, startV;
+            int tableS[1000], increm=1, size, startV;
+		//tableS is the maximum size of the array
+		//increm is how many values the user would like to
+		//increment the rows.
+		//size is how large the user would like to make the array, up to 1000
+		//startV is the value of the first row, first column
             unsigned short dataC;
+		//dataC is a user menu choice holder
             cout<<"Print A Custom Shop Use Torque Value Conversion Table"<<endl<<endl;
             cout<<"User can print a table up to 1000 values"<<endl;
-            cout<<"User chooses Troque Data needed (column 1)"<<endl;
+            cout<<"User chooses Torque Data needed (column 1)"<<endl;
             cout<<"---Either, Newton Meters, Foot Pounds, or Inch Pounds"<<endl<<endl;
             cout<<"Table will print out with corresponding values of the"<<endl;
             cout<<"other two data types, so the user can use any kind of"<<endl;
@@ -715,6 +722,7 @@ void startFO (int indexV, float &inchLb, float &newtMe){
 //Once completing this function, I realize that a future improvement could be
 //re-writing thus function to print just one option, with more input variables.
 //Then I can take the menu logic for the data type, and xfer it into main.
+
 void prinTbl (int array[], int &size, unsigned short &choice){
     //Columns
     float col1=0, col2=0;
@@ -799,6 +807,7 @@ void prinAc(float cargo[][3], int size, float &weight, float &moment,
     //Send weight to appropriate location
     cargo[row][col]=cargoW;
     //Add ARM multiplyer depending on location
+    //(further back, the higher it is, due to more inches from datum)
     if (row==0) {
         arm=cargoW*15;
     }
@@ -806,10 +815,10 @@ void prinAc(float cargo[][3], int size, float &weight, float &moment,
         arm=cargoW*25;
     }
     else if (row==2) {
-        arm=cargoW*25;
+        arm=cargoW*35;
     }
     else if (row==3) {
-        arm=cargoW*35;
+        arm=cargoW*45;
     }
     //Final calculations
     moment=moment+arm;
